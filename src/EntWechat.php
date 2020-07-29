@@ -1,6 +1,6 @@
 <?php
 
-namespace homevip;
+namespace Tool;
 
 /**
  * 企业微信 API
@@ -54,6 +54,66 @@ class EntWechat
 
 
     /**
+     * CURL 请求 [GET]
+     *
+     * @param string $url
+     * @return void
+     */
+    public function getCurl(string $url)
+    {
+        $client = new \GuzzleHttp\Client();
+        $response = $client->get($url);
+
+        // 状态
+        if ($response->getStatusCode() != 200) {
+            return false;
+        }
+
+        // 结果
+        $returnContents = json_decode($response->getBody()->getContents(), true);
+        if ($returnContents['errcode']) {
+            return implode(',', $returnContents);
+        }
+        return $returnContents;
+    }
+
+
+    /**
+     * CURL 请求 [POST]
+     *
+     * @param string $url
+     * @param array $options
+     * @return void
+     */
+    public function postCurl(string $url, array $options)
+    {
+        $client = new \GuzzleHttp\Client();
+        $response = $client->post($url, [
+            'json' => $options,
+
+            // 头信息
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0',
+                'Accept-Language' => 'zh-CN,zh;q=0.9,en;q=0.8,sm;q=0.7',
+                'Accept-Encoding' => 'gzip'
+            ],
+        ]);
+
+        // 状态
+        if ($response->getStatusCode() != 200) {
+            return false;
+        }
+
+        // 结果
+        $returnContents = json_decode($response->getBody()->getContents(), true);
+        if ($returnContents['errcode']) {
+            return implode(',', $returnContents);
+        }
+        return $returnContents;
+    }
+
+
+    /**
      * 获取 access_token
      *
      * @return string
@@ -67,11 +127,10 @@ class EntWechat
                 'corpsecret'    => $this->corpsecret,
             ];
             $url = $this->url . 'gettoken?' . http_build_query($array);
-            $getCurl = getCurl($url);
-            if (is_json($getCurl)) {
-                $result = json_decode($getCurl, true);
-                if (!$result['errcode']) {
-                    S($key, $result['access_token'], $result['expires_in']);
+            $getCurl = $this->getCurl($url);
+            if (is_array($getCurl)) {
+                if (!$getCurl['errcode']) {
+                    S($key, $getCurl['access_token'], $getCurl['expires_in']);
                 }
             }
         }
@@ -92,10 +151,7 @@ class EntWechat
             'access_token'  => $this->access_token(),
         ];
         $url = $this->url . 'department/list?' . http_build_query($array);
-        $getCurl = getCurl($url);
-        if (is_json($getCurl)) {
-            return json_decode($getCurl, true);
-        }
+        return $this->getCurl($url);
     }
 
 
@@ -112,10 +168,7 @@ class EntWechat
             'department_id' => $department_id,
         ];
         $url = $this->url . 'user/simplelist?' . http_build_query($array);
-        $getCurl = getCurl($url);
-        if (is_json($getCurl)) {
-            return json_decode($getCurl, true);
-        }
+        return $this->getCurl($url);
     }
 
 
@@ -132,10 +185,7 @@ class EntWechat
             'department_id' => $department_id,
         ];
         $url = $this->url . 'user/list?' . http_build_query($array);
-        $getCurl = getCurl($url);
-        if (is_json($getCurl)) {
-            return json_decode($getCurl, true);
-        }
+        return $this->getCurl($url);
     }
 
 
@@ -152,10 +202,7 @@ class EntWechat
             'userid'        => $userid,
         ];
         $url = $this->url . 'user/get?' . http_build_query($array);
-        $getCurl = getCurl($url);
-        if (is_json($getCurl)) {
-            return json_decode($getCurl, true);
-        }
+        return $this->getCurl($url);
     }
 
 
@@ -172,10 +219,7 @@ class EntWechat
             'userid'        => $userid,
         ];
         $url = $this->url . 'externalcontact/list?' . http_build_query($array);
-        $getCurl = getCurl($url);
-        if (is_json($getCurl)) {
-            return json_decode($getCurl, true);
-        }
+        return $this->getCurl($url);
     }
 
 
@@ -192,10 +236,7 @@ class EntWechat
             'external_userid'   => $external_userid,
         ];
         $url = $this->url . 'externalcontact/get?' . http_build_query($array);
-        $getCurl = getCurl($url);
-        if (is_json($getCurl)) {
-            return json_decode($getCurl, true);
-        }
+        return $this->getCurl($url);
     }
 
 
@@ -221,10 +262,7 @@ class EntWechat
             'limit'         => $limit,
         ];
         $url = $this->url . 'externalcontact/groupchat/list?' . http_build_query($array);
-        $getCurl = getCurl($url);
-        if (is_json($getCurl)) {
-            return json_decode($getCurl, true);
-        }
+        return $this->getCurl($url);
     }
 
 
@@ -240,14 +278,10 @@ class EntWechat
             'access_token'  => $this->access_token(),
         ];
         $url = $this->url . 'externalcontact/groupchat/get?' . http_build_query($array);
-
         $json = [
             'chat_id'  => $chat_id,
         ];
-        $postCurl = postCurl($url, json_encode($json));
-        if (is_json($postCurl)) {
-            return json_decode($postCurl, true);
-        }
+        return $this->postCurl($url, $json);
     }
 
 
@@ -270,10 +304,7 @@ class EntWechat
         if (!empty($partyid))       $json['partyid']       = $partyid;
         if (!empty($start_time))    $json['start_time']    = $start_time;
         if (!empty($end_time))      $json['end_time']      = $end_time;
-        $postCurl = postCurl($url, json_encode($json));
-        if (is_json($postCurl)) {
-            return json_decode($postCurl, true);
-        }
+        return $this->postCurl($url, $json);
     }
 
 
@@ -306,13 +337,30 @@ class EntWechat
         if (!empty($offset))            $json['offset']             = $offset;
         if (!empty($limit))             $json['limit']              = $limit;
 
-        $postCurl = postCurl($url, json_encode($json));
-        if (is_json($postCurl)) {
-            return json_decode($postCurl, true);
-        }
+        return $this->postCurl($url, $json);
     }
 
 
+
+    /**
+     * 添加企业群发消息任务
+     *
+     * @param string $chat_type
+     * @param string $external_userid
+     * @param string $sender
+     * @param string $text_content
+     * @param string $image_media_id
+     * @param string $image_pic_url
+     * @param string $link_title
+     * @param string $link_picurl
+     * @param string $link_desc
+     * @param string $link_url
+     * @param string $miniprogram_title
+     * @param string $miniprogram_pic_media_id
+     * @param string $miniprogram_appid
+     * @param string $miniprogram_page
+     * @return void
+     */
     public function externalcontact_add_msg_template(
         string $chat_type = NULL,
         string $external_userid = NULL,
@@ -351,10 +399,7 @@ class EntWechat
         if (!empty($miniprogram_appid))         $json['miniprogram.appid']          = $miniprogram_appid;
         if (!empty($miniprogram_page))          $json['miniprogram.page']           = $miniprogram_page;
 
-        $postCurl = postCurl($url, json_encode($json));
-        if (is_json($postCurl)) {
-            return json_decode($postCurl, true);
-        }
+        return $this->postCurl($url, $json);
     }
 
 
