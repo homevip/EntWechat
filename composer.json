@@ -1,0 +1,27 @@
+{
+    "name": "homevip/ent-wechat",
+    "description": "企业微信 API",
+    "homepage": "https://github.com/homevip/EntWechat.git",
+    "license": "MIT",
+    "keywords": [
+        "library",
+        "helpers",
+        "laravel",
+        "php"
+    ],
+    "authors": [
+        {
+            "name": "homevip",
+            "email": "homevip@126.com"
+        }
+    ],
+    "require": {
+        "php": "^7.0"
+    },
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "homevip\\": "src"
+        }
+    }
+}
