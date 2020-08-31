@@ -1,6 +1,6 @@
 <?php
 
-namespace Tool;
+namespace homevip;
 
 /**
  * 企业微信 API
@@ -382,7 +382,6 @@ class EntWechat
         ];
         $url = $this->url . 'externalcontact/add_msg_template?' . http_build_query($array);
 
-        dd($url);
 
         if (!empty($chat_type))                 $json['chat_type']                  = $chat_type;
         if (!empty($external_userid))           $json['external_userid']            = $external_userid;
@@ -399,6 +398,7 @@ class EntWechat
         if (!empty($miniprogram_appid))         $json['miniprogram.appid']          = $miniprogram_appid;
         if (!empty($miniprogram_page))          $json['miniprogram.page']           = $miniprogram_page;
 
+        dd($json);
         return $this->postCurl($url, $json);
     }
 

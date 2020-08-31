@@ -22,12 +22,12 @@ $user_get = $EntWechat->user_get('成员UserID');
 
 
 /**
-    * 获取客户列表
-    * 
-    * "wo50nkEQAAfg3m2niUVOTYPf_Dy8Vr-w"
-    * "wm50nkEQAAIVgBHAvlAYanM50rMEr1wQ"
-    * "wm50nkEQAAntSbfH8gzoLTIE9bGFe8JA"
-    */
+* 获取客户列表
+* 
+* "wo50nkEQAAfg3m2niUVOTYPf_Dy8Vr-w"
+* "wm50nkEQAAIVgBHAvlAYanM50rMEr1wQ"
+* "wm50nkEQAAntSbfH8gzoLTIE9bGFe8JA"
+*/
 $externalcontact_lis = $EntWechat->externalcontact_lis('成员UserID');
 
 // 获取客户详情
@@ -48,5 +48,5 @@ $ext_get_user_behavior_data = $EntWechat->externalcontact_get_user_behavior_data
 $ext_groupchat_statistic = $EntWechat->externalcontact_groupchat_statistic('1595779200');
 
 // 添加企业群发消息任务
-$ext_add_msg_template = $EntWechat->externalcontact_add_msg_template('group', '', '', 'aaa');
+$ext_add_msg_template = $EntWechat->externalcontact_add_msg_template('single', '', '', 'aaa');
 ```
